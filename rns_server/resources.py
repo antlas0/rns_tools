@@ -1,6 +1,6 @@
 
 APP_NAME = "rns_server"
 
-LXMF_DISPLAY_NAME = "rns_lxmf_server2"
+LXMF_DISPLAY_NAME = "rns_lxmf_server"
 LXMF_REQUIRED_STAMP_COST = 8
 LXMF_ENFORCE_STAMPS = False

@@ -23,10 +23,10 @@ class Manager:
         logger.info(f"Using rns_server runtime dir {self._rns_server_runtime_dir}")
         self._lxmf_server_runtime_dir = os.path.join(os.path.expanduser('~'), f".{APP_NAME}")
         self._reticulum = RNS.Reticulum(configdir=args.rns)        
-        self._announce_handler = None
         self._store = Store()
-        self._lxmf_server = LXMFServer(self._lxmf_server_runtime_dir)
+        self._lxmf_server = LXMFServer(self._lxmf_server_runtime_dir, self._store)
         self._identity = None
+        self._announce_handler = AnnounceHandler(self._store)
 
     def load_identity(self) -> Optional[RNS.Identity]:
         identity = None
