@@ -5,5 +5,8 @@ services:
     restart: unless-stopped
     mem_limit: 1gb
     memswap_limit: 1gb
+    environment:
+      - CFG_RETICULUM_LISTEN_IP=0.0.0.0
+      - CFG_RETICULUM_LISTEN_PORT=5000
     ports:
       - 49812:5000
