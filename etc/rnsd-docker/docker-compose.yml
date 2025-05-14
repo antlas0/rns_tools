@@ -1,0 +1,9 @@
+services:
+  rnsd-docker:
+    image: rnsd-docker:latest
+    container_name: rns_server
+    restart: unless-stopped
+    mem_limit: 1gb
+    memswap_limit: 1gb
+    ports:
+      - 49812:5000
