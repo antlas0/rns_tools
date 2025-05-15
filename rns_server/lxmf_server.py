@@ -4,6 +4,7 @@ import time
 import threading
 import logging
 import tempfile
+from typing import Any
 
 from .resources import LXMF_REQUIRED_STAMP_COST, LXMF_ENFORCE_STAMPS, LXMF_DISPLAY_NAME
 from .lxmf_delivery_handler import LXMFDeliveryHandler
@@ -19,6 +20,8 @@ class LXMFServer(threading.Thread):
         self._storage_path:str = runtime_dir if runtime_dir is not None else tempfile.mkdtemp() # currently won't be deteled when quitting
         logger.info(f"Using LXMF runtime dir {self._storage_path}")
         self._router = LXMF.LXMRouter(storagepath=self._storage_path, enforce_stamps=LXMF_ENFORCE_STAMPS)
+        # hack to prevent signal to be overrided by LXMROUTER
+        self._router.sigint_handler = lambda x:None
         self._destination = None
         self._delivery_handler = LXMFDeliveryHandler(store)
 
@@ -28,13 +31,13 @@ class LXMFServer(threading.Thread):
         logger.info(f"Ready to receive LXMF messages on {RNS.prettyhexrep(self._destination.hash)}")
         return True
 
-    def announce(self) -> None:
-        logger.info(f"Announced LXMF server {self._destination.hash.hex()}")
-        self._router.announce(self._destination.hash)
+    def announce(self, interface:Any) -> None:
+        self._router.announce(self._destination.hash, attached_interface=interface)
+        logger.info(f"Announced LXMF server {self._destination.hash.hex()} through {interface}")
 
     def run(self) -> None:
         while self._running:
-            time.sleep(1)
+            time.sleep(0.1)
 
     def quit(self) -> None:
         logger.info(f"Quitting...")
