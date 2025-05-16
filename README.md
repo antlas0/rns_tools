@@ -6,7 +6,7 @@ This package can be built and ran with docker.
 
 ```bash
 $ docker build . -t rns_server:latest
-$ docker run rns_server:latest --follow--anounces
+$ docker run rns_server:latest --follow-anounces
 ```
 
 ## Features
