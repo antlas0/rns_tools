@@ -13,14 +13,18 @@ if __name__ == "__main__":
     )
 
     parser.add_argument("--rns-conf", action="store", default=None, help="Path to alternative Reticulum config directory.",type=str,)
+    parser.add_argument("--rns-server-conf", action="store", default=None, help="Path to alternative rns-server runtime directory.",type=str,)
     parser.add_argument("-a", "--announce", action="store_true", default=False, help="Announce at startup.",)
+    parser.add_argument("-f", "--follow-announces", action="store_true", default=False, help="Show broadcasted announces.",)
     parser.add_argument("-l", "--lxmf", action="store_true", default=False, help="Activate LXMF exchange.",)
-    parser.add_argument("-s", "--file-sender", action="store", default=None, help="Send a file to a destination.",)
-    parser.add_argument("-F", "--file-to-send", action="store", default=None, help="Choose the file to send.",)
-    parser.add_argument("-r", "--file-receiver", action="store", default=None, help="Receive a file to directory",)
+    parser.add_argument("-p", "--lxmf-peer", action="store", default=None, help="Specify a per to send a message to.",)
+    parser.add_argument("-m", "--lxmf-message", action="store", default=None, help="Specify a message to be sent.",)
+    parser.add_argument("-d", "--file-destination", action="store", default=None, help="Download a file from a RNS destination.",)
+    parser.add_argument("-F", "--file-name", action="store", default=None, help="Specify the filename to download.",)
+    parser.add_argument("-s", "--serve-directory", action="store", default=None, help="Specify which directory to server as a file server.",)
 
     args = parser.parse_args()
     m = Manager(args)
-    m.setup()
-    m.run()
+    if m.setup():
+        m.run()
 

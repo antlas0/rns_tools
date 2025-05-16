@@ -1,18 +1,44 @@
-# rns_server
-RNS and LXMF node.
+# RNS tool
+This package provides a small range of RNS tools. Driven by the curiosity of Reticulum, developing these tools made me undestand its inner layers.
 
-## How to start
+## Docker
+This package can be built and ran with docker.
 
 ```bash
-$ python -m rns_server --announce
+$ docker build . -t rns_server:latest
+$ docker run rns_server:latest --follow--anounces
 ```
 
-## File exchange
-```
-$ python -m rns_server --announce -r received_dir
+## Features
+
+### Displaying incoming announces
+
+```bash
+$ python -m rns_server --follow-announces
 ```
 
+### LXMF
+
+#### Receive messages
 ```
-$ python -m rns_server --announce -s xxxxxxxx -F file.txt
+$ python -m rns_server --lxmf
+```
+
+#### Send a message 
+```bash
+$ python -m rns_server --lxmf --lxmf-peer xxxxxxxxxxxxxx  --lxmf-message "test!"
+```
+
+### LXMF File exchange
+A server whith an announced destination serves a directory. A client connect to it and requests a filename, which must exist inside the directory.
+
+#### Server
+```bash
+$ python -m rns_server -s served_dir/
+```
+
+#### Client
+```bash
+$ python -m rns_server -c xxxxxxxxxxxxxx -F file.txt
 ```
 
