@@ -9,7 +9,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Reticulum vizualiser"
+        description="Reticulum tools"
     )
 
     parser.add_argument("--rns-conf", action="store", default=None, help="Path to alternative Reticulum config directory.",type=str,)
