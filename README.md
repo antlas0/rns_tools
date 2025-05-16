@@ -39,6 +39,6 @@ $ python -m rns_server -s served_dir/
 
 #### Client
 ```bash
-$ python -m rns_server -c xxxxxxxxxxxxxx -F file.txt
+$ python -m rns_server -d xxxxxxxxxxxxxx -F file.txt
 ```
 
