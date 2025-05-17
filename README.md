@@ -1,5 +1,5 @@
 # RNS tool
-This package provides a small range of RNS tools. Driven by the curiosity of Reticulum, developing these tools made me undestand its inner layers.
+This package provides a small range of RNS tools,driven by my curiosity about Reticulum stack.
 
 ## Docker
 This package can be built and ran with docker.
@@ -34,7 +34,7 @@ A server with an announced destination serves a directory. A client connect to i
 
 #### Server
 ```bash
-$ python -m rns_server -s served_dir/
+$ python -m rns_server --announce -s served_dir/
 ```
 
 #### Client
