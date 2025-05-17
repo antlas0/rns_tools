@@ -1,5 +1,5 @@
 
-APP_NAME = "rns_server"
+APP_NAME = "rns_tools"
 
 LXMF_DISPLAY_NAME = "rns_lxmf_server"
 LXMF_REQUIRED_STAMP_COST = 8
