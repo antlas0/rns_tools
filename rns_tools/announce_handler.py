@@ -32,8 +32,6 @@ class AnnounceHandler(threading.Thread):
                 RNS.Destination.IN,
                 RNS.Destination.SINGLE,
                 "AnnounceListener",
-                "lxmf",
-                "delivery",
             )
         self._destination.set_proof_strategy(RNS.Destination.PROVE_ALL)
         return True
