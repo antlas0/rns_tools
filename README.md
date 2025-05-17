@@ -30,7 +30,7 @@ $ python -m rns_server --lxmf --lxmf-peer xxxxxxxxxxxxxx  --lxmf-message "test!"
 ```
 
 ### Link File exchange
-A server whith an announced destination serves a directory. A client connect to it and requests a filename, which must exist inside the directory.
+A server with an announced destination serves a directory. A client connect to it and requests a filename, which must exist inside the directory.
 
 #### Server
 ```bash
