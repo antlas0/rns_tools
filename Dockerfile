@@ -21,4 +21,4 @@ ENV PATH="/home/runner/.venv:$PATH"
 RUN python -m pip install -r requirements.txt
 RUN python -m pip install . --user
 
-ENTRYPOINT [ "python", "-m", "rns_server" ]
+ENTRYPOINT [ "python", "-m", "rns_tools" ]
