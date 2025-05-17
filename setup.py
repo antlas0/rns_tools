@@ -16,7 +16,7 @@ def parse_requirements(filename):
 requirements = parse_requirements('requirements.txt')
 
 setup(
-    name="rns_server",
+    name="rns_tools",
     version="0.0.1",
     packages=find_packages(),
     install_requires=requirements,
