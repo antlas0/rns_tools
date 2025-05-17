@@ -13,7 +13,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument("--rns-conf", action="store", default=None, help="Path to alternative Reticulum config directory.",type=str,)
-    parser.add_argument("--rns-server-conf", action="store", default=None, help="Path to alternative rns-server runtime directory.",type=str,)
+    parser.add_argument("--rns-tools-conf", action="store", default=None, help="Path to alternative rns-server runtime directory.",type=str,)
     parser.add_argument("-a", "--announce", action="store_true", default=False, help="Announce at startup.",)
     parser.add_argument("-f", "--follow-announces", action="store_true", default=False, help="Show broadcasted announces.",)
     parser.add_argument("-l", "--lxmf", action="store_true", default=False, help="Activate LXMF exchange.",)
