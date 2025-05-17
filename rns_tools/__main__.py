@@ -17,6 +17,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--announce", action="store_true", default=False, help="Announce at startup.",)
     parser.add_argument("-f", "--follow-announces", action="store_true", default=False, help="Show broadcasted announces.",)
     parser.add_argument("-l", "--lxmf", action="store_true", default=False, help="Activate LXMF exchange.",)
+    parser.add_argument("-L", "--lxmf-display-name", action="store", default=None, type=str, help="LXMF node display name.",)
     parser.add_argument("-p", "--lxmf-peer", action="store", default=None, help="Specify a per to send a message to.",)
     parser.add_argument("-m", "--lxmf-message", action="store", default=None, help="Specify a message to be sent.",)
     parser.add_argument("-d", "--file-destination", action="store", default=None, help="Download a file from a RNS destination.",)

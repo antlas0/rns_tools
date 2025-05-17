@@ -4,7 +4,7 @@ import time
 import threading
 import logging
 import tempfile
-from typing import Any
+from typing import Any, Optional
 
 from .resources import LXMF_REQUIRED_STAMP_COST, LXMF_ENFORCE_STAMPS, LXMF_DISPLAY_NAME
 from .lxmf_delivery_handler import LXMFDeliveryHandler
@@ -14,12 +14,12 @@ logger = logging.getLogger(__name__)
 
 
 class LXMFServer(threading.Thread):
-    def __init__(self, runtime_dir:str, store:Store):
+    def __init__(self, runtime_dir:str, store:Store, display_name:Optional[str]=None):
         super().__init__()
         self._running:bool = True
         self._storage_path:str = runtime_dir if runtime_dir is not None else tempfile.mkdtemp() # currently won't be deteled when quitting
         logger.info(f"Using LXMF runtime dir {self._storage_path}")
-        self._router = LXMF.LXMRouter(storagepath=self._storage_path, enforce_stamps=LXMF_ENFORCE_STAMPS)
+        self._router = LXMF.LXMRouter(storagepath=self._storage_path)
         # hack to prevent signal to be overrided by LXMROUTER
         self._router.sigint_handler = lambda x:None
         self._destination = None
@@ -27,9 +27,13 @@ class LXMFServer(threading.Thread):
         self._recipient_hash = None
         self._peer = None
         self._message = None
+        self._display_name = display_name
 
     def setup(self, identity:RNS.Identity) -> bool:
-        self._destination = self._router.register_delivery_identity(identity, display_name=LXMF_DISPLAY_NAME, stamp_cost=LXMF_REQUIRED_STAMP_COST)
+        display_name = LXMF_DISPLAY_NAME
+        if self._display_name is not None:
+            display_name = self._display_name
+        self._destination = self._router.register_delivery_identity(identity, display_name=display_name)
         self._router.register_delivery_callback(self._delivery_handler.delivery_callback)
         logger.info(f"Ready to receive LXMF messages on {RNS.prettyhexrep(self._destination.hash)}")
         return True
@@ -61,7 +65,11 @@ class LXMFServer(threading.Thread):
 
     def announce(self, interface:Any) -> None:
         self._router.announce(self._destination.hash, attached_interface=interface)
-        logger.info(f"Announced LXMF server {self._destination.hash.hex()} through {interface}")
+        try:
+            display_name = self._router.delivery_destinations[self._destination.hash].display_name
+        except UnicodeDecodeError:
+            display_name = None
+        logger.info(f"Announced LXMF server {self._destination.hash.hex()} with display name {display_name} through {interface}")
 
     def run(self) -> None:
         self.send_message()

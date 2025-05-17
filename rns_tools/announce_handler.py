@@ -22,12 +22,25 @@ class AnnounceHandler(threading.Thread):
         self._running = True
         self.aspect_filter = aspect_filter
         self._store = store
+        self._destination = None
+        logger.info("Show incoming announces")
+        RNS.Transport.register_announce_handler(self)
 
     def setup(self, identity: RNS.Identity) -> bool:
+        self._destination = RNS.Destination(
+                identity,
+                RNS.Destination.IN,
+                RNS.Destination.SINGLE,
+                "AnnounceListener",
+                "lxmf",
+                "delivery",
+            )
+        self._destination.set_proof_strategy(RNS.Destination.PROVE_ALL)
         return True
 
     def announce(self, interface:Any) -> None:
-        pass
+        self._destination.announce(attached_interface=interface)
+        logger.info(f"Announced announce listener {self._destination.hash.hex()} through {interface}")
 
     def received_announce(self, destination_hash, announced_identity, app_data):
         data = None

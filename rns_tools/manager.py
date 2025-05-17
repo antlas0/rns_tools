@@ -26,7 +26,7 @@ class Manager:
         if not os.path.isdir(self._rns_tools_runtime_dir):
             os.mkdir(self._rns_tools_runtime_dir)
         logger.info(f"Using rns_tools runtime dir {self._rns_tools_runtime_dir}")
-        self._worker_runtime_dir = os.path.join(self._rns_tools_runtime_dir, f".{APP_NAME}")
+        self._worker_runtime_dir = os.path.join(self._rns_tools_runtime_dir)
         self._reticulum = RNS.Reticulum(configdir=args.rns_conf) 
         self._store = Store()
         self._identity = None
@@ -54,16 +54,8 @@ class Manager:
             self._identity = RNS.Identity()
             self.export_identity()
 
-        self._destination = RNS.Destination(
-                self._identity,
-                RNS.Destination.IN,
-                RNS.Destination.SINGLE,
-                "rns_tools",
-            )
-        self._destination.set_proof_strategy(RNS.Destination.PROVE_ALL)
-
         if self._config.lxmf:
-            self._worker = LXMFServer(self._worker_runtime_dir, self._store)
+            self._worker = LXMFServer(self._worker_runtime_dir, self._store, display_name=self._config.lxmf_display_name)
             if self._config.lxmf_peer:
                 self._worker.set_peer(self._config.lxmf_peer)
             if self._config.lxmf_message:
@@ -74,8 +66,6 @@ class Manager:
             self._worker = FileClient(self._config.file_destination, self._config.file_name)
         if self._config.follow_announces:
             self._worker = AnnounceHandler(self._store)
-            logger.info("Show received announces")
-            RNS.Transport.register_announce_handler(self._worker)
 
         if self._worker:
             return self._worker.setup(self._identity)
@@ -85,12 +75,11 @@ class Manager:
     def announce(self, interface:Any) -> None:
         nickname = f"{self._destination.hash.hex()}"
         self._destination.announce(app_data=nickname.encode("utf-8"), attached_interface=interface)
-        logger.info(f"Announced RNS identity {self._destination.hash.hex()} through {interface}")
+        logger.info(f"Announced RNS identity {self._destination.hash.hex()} with app_data {nickname} through {interface}")
 
     def run(self) -> None:
         if self._config.announce:
             for interface in RNS.Transport.interfaces:
-                self.announce(interface)
                 if self._worker:
                     self._worker.announce(interface)
 
