@@ -11,7 +11,7 @@ RUN usermod -aG sudo runner
 WORKDIR /home/runner
 USER runner
 RUN mkdir .reticulum
-COPY rns_server rns_server
+COPY rns_tools rns_tools
 COPY config .reticulum/config
 COPY setup.py setup.py
 COPY requirements.txt requirements.txt
