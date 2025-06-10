@@ -19,6 +19,11 @@ $ python -m rns_tools --follow-announces
 
 ### LXMF
 
+#### Announce an LXMF peer
+```
+$ python -m rns_tools --announce --lxmf --lxmf-display-name "LXMF_PEER"
+```
+
 #### Receive messages
 ```
 $ python -m rns_tools --lxmf
