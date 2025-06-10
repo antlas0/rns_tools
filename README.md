@@ -1,5 +1,5 @@
 # RNS tools
-This package provides a small range of RNS tools,driven by my curiosity about Reticulum stack.
+This package provides a small range of RNS tools, driven by my curiosity about Reticulum stack.
 
 ## Docker
 This package can be built and ran with docker.
