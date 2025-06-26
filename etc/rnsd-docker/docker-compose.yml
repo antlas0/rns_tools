@@ -1,12 +1,20 @@
 services:
   rnsd-docker:
     image: rnsd-docker:latest
-    container_name: rns_tools
+    container_name: rnsd-docker
     restart: unless-stopped
     mem_limit: 1gb
     memswap_limit: 1gb
     environment:
-      - CFG_RETICULUM_LISTEN_IP=0.0.0.0
-      - CFG_RETICULUM_LISTEN_PORT=5000
-    ports:
-      - 49812:5000
+     - RNS_PORT=/dev/ttyACM0
+     - RNS_FREQUENCY=867500000
+     - RNS_BANDWIDTH=125000
+     - RNS_TXPOWER=17
+     - RNS_SF=9
+     - RNS_CR=5
+     - CFG_CALLSIGN_ID=F4LFN
+     - RNS_CALLSIGN_INTERVAL=3600
+     - RNS_NAME=TBeamInterface
+    devices: 
+      - /dev/ttyACM0:/dev/ttyACM0
+    privileged: true

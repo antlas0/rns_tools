@@ -1,8 +1,7 @@
 FROM python:3.11-bookworm
 
-ENV TCP_SERVER_LISTEN_IP="0.0.0.0"
-ENV TCP_SERVER_LISTEN_PORT=45454
 ENV CONFIG_FILE_PATH=".reticulum/config"
+ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update \
     && apt-get install -y sudo pipx build-essential \
@@ -11,6 +10,7 @@ RUN apt-get update \
 
 RUN useradd -ms /bin/bash runner
 RUN usermod -aG sudo runner
+RUN usermod -aG dialout runner
 RUN echo "%sudo   ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers
 
 COPY --chmod=0755 entrypoint.sh /entrypoint.sh

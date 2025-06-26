@@ -84,9 +84,15 @@
     type = AutoInterface
     enabled = false
 
- [[TCPServer Interface]]
-  type = TCPServerInterface
-  enabled = yes
-  mode = gateway
-  listen_ip = CFG_RETICULUM_LISTEN_IP
-  listen_port = CFG_RETICULUM_LISTEN_PORT
+ [[RNode Interface]]
+    type = RNodeInterface
+    interface_enabled = true
+    port = CFG_PORT
+    frequency = CFG_FREQUENCY
+    bandwidth = CFG_BANDWIDTH
+    txpower = CFG_TXPOWER
+    spreadingfactor = CFG_SF
+    codingrate = CFG_CR
+    callsign = CFG_CALLSIGN_ID
+    id_interval = CFG_CALLSIGN_INTERVAL
+    name = CFG_NAME
