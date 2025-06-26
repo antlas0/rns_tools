@@ -23,11 +23,6 @@ $ python -m rns_tools --announce --lxmf --lxmf-display-name "LXMF_PEER"
 $ uv run rns_tools --lxmf
 ```
 
-#### Send a message 
-```bash
-$ uv run rns_tools --lxmf --lxmf-peer xxxxxxxxxxxxxx  --lxmf-message "test!"
-```
-
 ### Link File exchange
 A server with an announced destination serves a directory. A client connect to it and requests a filename, which must exist inside the directory.
 
