@@ -13,7 +13,7 @@ class LXMFDeliveryHandler:
     def __init__(self, store:Store):
         self._store = store
 
-    def delivery_callback(self, message):
+    def delivery_callback(self, message) -> LXMFMessageInfo:
         stamp_string:str = ""
         time_string      = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(message.timestamp))
         signature_string = "Signature is invalid, reason undetermined"
@@ -47,13 +47,16 @@ class LXMFDeliveryHandler:
             logger.info("\t+---------------------------------------------------------------")
 
         m = LXMFMessageInfo(
-            source_hash=RNS.prettyhexrep(message.source_hash),
-            destination_hash=RNS.prettyhexrep(message.destination_hash),
+            source_hash=RNS.hexrep(message.source_hash, delimit=False),
+            destination_hash=RNS.hexrep(message.destination_hash, delimit=False),
             source_instance=str(message.get_source()),
             destination_instance=str(message.get_destination()),
             rssi=message.rssi,
             q=message.q,
             snr=message.snr,
             packed_size=message.packed_size,
+            content=message.content_as_string(),
         )
         self._store.store_message(m)
+        return m
+

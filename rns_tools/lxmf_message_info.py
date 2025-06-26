@@ -12,3 +12,4 @@ class LXMFMessageInfo:
     q: Optional[float]=None
     rssi: Optional[float]=None
     packed_size: Optional[int]=None
+    content: Optional[str]=None

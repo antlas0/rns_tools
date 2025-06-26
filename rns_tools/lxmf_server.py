@@ -19,62 +19,63 @@ class LXMFServer(threading.Thread):
         self._running:bool = True
         self._storage_path:str = runtime_dir if runtime_dir is not None else tempfile.mkdtemp() # currently won't be deteled when quitting
         logger.info(f"Using LXMF runtime dir {self._storage_path}")
-        self._router = LXMF.LXMRouter(storagepath=self._storage_path)
-        # hack to prevent signal to be overrided by LXMROUTER
-        self._router.sigint_handler = lambda x:None
-        self._destination = None
+        self._router = None
+        self._local_source = None
         self._delivery_handler = LXMFDeliveryHandler(store)
-        self._recipient_hash = None
-        self._peer = None
-        self._message = None
         self._display_name = display_name
 
     def setup(self, identity:RNS.Identity) -> bool:
+        self._router = LXMF.LXMRouter(identity, storagepath=self._storage_path, enforce_stamps=LXMF_ENFORCE_STAMPS)
+        # hack to prevent signal to be overrided by LXMROUTER
+        self._router.sigint_handler = lambda x:None
         display_name = LXMF_DISPLAY_NAME
         if self._display_name is not None:
             display_name = self._display_name
-        self._destination = self._router.register_delivery_identity(identity, display_name=display_name)
-        self._router.register_delivery_callback(self._delivery_handler.delivery_callback)
-        logger.info(f"Ready to receive LXMF messages on {RNS.prettyhexrep(self._destination.hash)}")
+        self._local_source = self._router.register_delivery_identity(identity, display_name=display_name, stamp_cost=LXMF_REQUIRED_STAMP_COST)
+        self._router.register_delivery_callback(self.delivery_callback)
+        logger.info(f"Ready to receive LXMF messages on {RNS.prettyhexrep(self._local_source.hash)}")
         return True
 
-    def set_message(self, message:str) -> None:
-        self._message = message
+    def delivery_callback(self, message) -> None:
+        m = self._delivery_handler.delivery_callback(message)
+        self.send_message(m.source_hash, m.content)
 
-    def set_peer(self, peer:str) -> None:
-        self._recipient_hash = bytes.fromhex(peer)
+    def send_message(self, recipient:str, message:str) -> bool:
+        recipient_hash = bytes.fromhex(recipient)
+    
+        if not len(recipient_hash) == RNS.Reticulum.TRUNCATED_HASHLENGTH//8:
+            RNS.log("Invalid destination hash length", RNS.LOG_ERROR)
+            return False
 
-    def send_message(self) -> bool:
-        if self._recipient_hash and self._message:
-            if not RNS.Transport.has_path(self._recipient_hash):
-                logger.info("Destination is not yet known. Requesting path and waiting for announce to arrive...")
-                RNS.Transport.request_path(self._recipient_hash)
-                while not RNS.Transport.has_path(self._recipient_hash):
-                    time.sleep(0.1)
-                nh = RNS.Transport.next_hop(destination_hash=self._recipient_hash)
-                if nh: nh = nh.hex()
-                logger.info(f"Going through {nh} via {RNS.Transport.next_hop_interface(self._recipient_hash)}")
+        if not RNS.Transport.has_path(recipient_hash):
+            logger.info("Destination is not yet known. Requesting path...")
+            RNS.Transport.request_path(recipient_hash)
+            if not RNS.Transport.has_path(recipient_hash):
+                logger.info("No path detected, waiting for announce to arrive...")
+                return False
 
-            recipient_identity = RNS.Identity.recall(self._recipient_hash)
-            self._peer = RNS.Destination(recipient_identity, RNS.Destination.OUT, RNS.Destination.SINGLE, "lxmf", "delivery")
+        nh = RNS.Transport.next_hop(destination_hash=recipient_hash)
+        if nh: nh = nh.hex()
+        logger.info(f"Going through {nh} via {RNS.Transport.next_hop_interface(recipient_hash)}")
 
-            lxm = LXMF.LXMessage(self._peer, self._destination, self._message, "New message", desired_method=LXMF.LXMessage.OPPORTUNISTIC, include_ticket=True)
-            self._router.handle_outbound(lxm)
-            logger.info(f"Sent message {self._message} to peer {self._peer.hash.hex()}")
-            self.quit()
+        recipient_identity = RNS.Identity.recall(recipient_hash)
+        dest = RNS.Destination(recipient_identity, RNS.Destination.OUT, RNS.Destination.SINGLE, "lxmf", "delivery")
+
+        lxm = LXMF.LXMessage(dest, self._local_source, content=message, desired_method=LXMF.LXMessage.DIRECT)
+        self._router.handle_outbound(lxm)
+        logger.info(f"Sent message {message} to peer {dest.hash.hex()}")
 
     def announce(self, interface:Any) -> None:
-        self._router.announce(self._destination.hash, attached_interface=interface)
+        self._local_source.announce(attached_interface=interface)
         try:
-            display_name = self._router.delivery_destinations[self._destination.hash].display_name
+            display_name = self._router.delivery_destinations[self._local_source.hash].display_name
         except UnicodeDecodeError:
             display_name = None
-        logger.info(f"Announced LXMF server {self._destination.hash.hex()} with display name {display_name} through {interface}")
+        logger.info(f"Announced LXMF server {self._local_source.hash.hex()} with display name {display_name} through {interface}")
 
     def run(self) -> None:
-        self.send_message()
         while self._running:
-            time.sleep(0.1)
+            time.sleep(1)
 
     def quit(self) -> None:
         logger.info(f"Quitting...")

@@ -11,12 +11,6 @@ $ docker run rns_tools:latest --follow-anounces
 
 ## Features
 
-### Displaying incoming announces
-
-```bash
-$ python -m rns_tools --follow-announces
-```
-
 ### LXMF
 
 #### Announce an LXMF peer
@@ -26,12 +20,12 @@ $ python -m rns_tools --announce --lxmf --lxmf-display-name "LXMF_PEER"
 
 #### Receive messages
 ```
-$ python -m rns_tools --lxmf
+$ uv run rns_tools --lxmf
 ```
 
 #### Send a message 
 ```bash
-$ python -m rns_tools --lxmf --lxmf-peer xxxxxxxxxxxxxx  --lxmf-message "test!"
+$ uv run rns_tools --lxmf --lxmf-peer xxxxxxxxxxxxxx  --lxmf-message "test!"
 ```
 
 ### Link File exchange
@@ -39,11 +33,11 @@ A server with an announced destination serves a directory. A client connect to i
 
 #### Server
 ```bash$
-$ python -m rns_tools --announce -s served_dir/
+$ uv run rns_tools --announce -s served_dir/
 ```
 
 #### Client
 ```bash
-$ python -m rns_tools -d xxxxxxxxxxxxxx -F file.txt
+$ uv run rns_tools -d xxxxxxxxxxxxxx -F file.txt
 ```
 

@@ -32,6 +32,7 @@ class Manager:
         self._identity = None
         self._worker = None
         self._announce_handler = None
+        self._announce_follower = None
 
     def load_identity(self) -> Optional[RNS.Identity]:
         identity = None
@@ -56,36 +57,28 @@ class Manager:
 
         if self._config.lxmf:
             self._worker = LXMFServer(self._worker_runtime_dir, self._store, display_name=self._config.lxmf_display_name)
-            if self._config.lxmf_peer:
-                self._worker.set_peer(self._config.lxmf_peer)
-            if self._config.lxmf_message:
-                self._worker.set_message(self._config.lxmf_message)
         if self._config.serve_directory:
             self._worker = FileServer(self._config.serve_directory)
         if self._config.file_destination:
             self._worker = FileClient(self._config.file_destination, self._config.file_name)
-        if self._config.follow_announces:
-            self._worker = AnnounceHandler(self._store)
+        self._announce_follower = AnnounceHandler(self._store)
 
-        if self._worker:
-            return self._worker.setup(self._identity)
+        self._announce_follower.setup(self._identity)
+        self._worker.setup(self._identity)
 
         return True
-
-    def announce(self, interface:Any) -> None:
-        nickname = f"{self._destination.hash.hex()}"
-        self._destination.announce(app_data=nickname.encode("utf-8"), attached_interface=interface)
-        logger.info(f"Announced RNS identity {self._destination.hash.hex()} with app_data {nickname} through {interface}")
 
     def run(self) -> None:
         if self._config.announce:
             for interface in RNS.Transport.interfaces:
-                if self._worker:
-                    self._worker.announce(interface)
+                self._worker.announce(interface)
 
-        if self._worker:
-            self._worker.run()
-        self.quit()
-    
+        self._announce_follower.start()
+        self._worker.start()
+
+        self._announce_follower.join()
+        self._worker.join()
+
     def quit(self) -> None:
         logger.info(f"Quitting...")
+        self._worker.quit()
