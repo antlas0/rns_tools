@@ -12,7 +12,7 @@ services:
      - RNS_TXPOWER=17
      - RNS_SF=9
      - RNS_CR=5
-     - CFG_CALLSIGN_ID=F4LFN
+     - CFG_CALLSIGN_ID=X0XXX
      - RNS_CALLSIGN_INTERVAL=3600
      - RNS_NAME=TBeamInterface
     devices: 
