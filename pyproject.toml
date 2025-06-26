@@ -1,0 +1,23 @@
+[project]
+name = "rns_tools"
+version = "0.0.2"
+description = "Small tools based on Reticulum and LXMF."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "lxmf==0.6.3",
+    "rns==0.9.5",
+]
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["rns_tools"]
+
+[project.gui-scripts]
+rns_tools = "rns_tools:main"
