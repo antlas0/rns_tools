@@ -8,7 +8,7 @@ $ docker build . -t rnsd-docker:latest
 ```
 
 ## How to launch
-* Use `docker-compose`:
+* Use `docker-compose`
 ```bash
 $ docker-compose up
 ```
