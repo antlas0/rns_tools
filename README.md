@@ -9,6 +9,11 @@ $ docker build . -t rns_tools:latest
 $ docker run rns_tools:latest --follow-anounces
 ```
 
+## RNode interface using Docker
+For RNode interface, check this [README.md](https://github.com/antlas0/rns_tools/blob/9c0ee27261b857ecf39be709ec67e4ec0e4238ca/etc/rnsd-docker/README.md) file.
+
+To create a TCP server to which TCPInterfaces can connect, check this [README.md](https://github.com/antlas0/rns_tools/tree/4c4aca1df67e631ccc1f03c64cb6da66602bed88/etc/rnsd-docker) file.
+
 ## Features
 
 ### LXMF
